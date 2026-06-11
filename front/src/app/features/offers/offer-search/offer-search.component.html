@@ -1,0 +1,143 @@
+<div class="search-container">
+
+  <!-- TITRE -->
+  <div class="search-header">
+    <h1>Rechercher un véhicule</h1>
+    <p>Trouvez l'offre idéale parmi nos agences en Europe et aux États-Unis</p>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <mat-card class="search-form-card">
+    <mat-card-content>
+      <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Ville de départ</mat-label>
+            <input matInput formControlName="departureCity" placeholder="ex: Paris">
+            @if (searchForm.get('departureCity')?.hasError('required') && searchForm.get('departureCity')?.touched) {
+              <mat-error>La ville de départ est obligatoire</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Ville de retour</mat-label>
+            <input matInput formControlName="returnCity" placeholder="ex: Paris">
+            @if (searchForm.get('returnCity')?.hasError('required') && searchForm.get('returnCity')?.touched) {
+              <mat-error>La ville de retour est obligatoire</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date de départ</mat-label>
+            <input matInput [matDatepicker]="departurePicker"
+                   formControlName="departureDate"
+                   [min]="today"
+                   placeholder="JJ/MM/AAAA">
+            <mat-datepicker-toggle matIconSuffix [for]="departurePicker"></mat-datepicker-toggle>
+            <mat-datepicker #departurePicker></mat-datepicker>
+            @if (searchForm.get('departureDate')?.hasError('required') && searchForm.get('departureDate')?.touched) {
+              <mat-error>La date de départ est obligatoire</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date de retour</mat-label>
+            <input matInput [matDatepicker]="returnPicker"
+                   formControlName="returnDate"
+                   [min]="searchForm.get('departureDate')?.value || today"
+                   placeholder="JJ/MM/AAAA">
+            <mat-datepicker-toggle matIconSuffix [for]="returnPicker"></mat-datepicker-toggle>
+            <mat-datepicker #returnPicker></mat-datepicker>
+            @if (searchForm.get('returnDate')?.hasError('required') && searchForm.get('returnDate')?.touched) {
+              <mat-error>La date de retour est obligatoire</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field-small">
+            <mat-label>Catégorie ACRISS (optionnel)</mat-label>
+            <input matInput formControlName="acrissCode"
+                   placeholder="ex: ECMR"
+                   maxlength="4"
+                   style="text-transform: uppercase">
+            <mat-hint>4 lettres majuscules — ex: ECMR, CDMR</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary"
+                  type="submit"
+                  [disabled]="loading()">
+            @if (loading()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              Rechercher
+            }
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- RÉSULTATS -->
+  @if (searched()) {
+    <div class="results-section">
+
+      @if (offers().length === 0) {
+        <div class="no-results">
+          <p>Aucune offre disponible pour ces critères.</p>
+          <p>Essayez d'autres villes ou dates.</p>
+        </div>
+      } @else {
+        <h2>{{ offers().length }} offre(s) disponible(s)</h2>
+        <div class="offers-grid">
+          @for (offer of offers(); track offer.id) {
+            <mat-card 
+              class="offer-card" 
+              (click)="goToDetail(offer.id)" 
+              tabindex="0" 
+              (keydown.enter)="goToDetail(offer.id)" 
+              (keydown.space)="goToDetail(offer.id)">
+              <mat-card-header>
+                <mat-card-title>
+                  {{ offer.vehicle.brand }} {{ offer.vehicle.model }}
+                </mat-card-title>
+                <mat-card-subtitle>
+                  {{ offer.vehicle.year }} · {{ offer.vehicle.acrissCode }}
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="vehicle-info">
+                  <span>⛽ {{ offer.vehicle.fuelType }}</span>
+                  <span>⚙️ {{ offer.vehicle.transmission }}</span>
+                  <span>💺 {{ offer.vehicle.seats }} places</span>
+                </div>
+                <div class="agency-info">
+                  <p>📍 Départ : {{ offer.agencyDeparture.name }}</p>
+                  <p>📍 Retour : {{ offer.agencyReturn.name }}</p>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions>
+                <div class="price-action">
+                  <span class="price">{{ offer.pricePerDay }}€ / jour</span>
+                  <button mat-raised-button color="primary"
+                          (click)="goToDetail(offer.id); $event.stopPropagation()">
+                    Voir le détail
+                  </button>
+                </div>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

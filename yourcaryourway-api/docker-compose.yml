@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: ycyw-postgres
+    environment:
+      POSTGRES_DB: ycyw_db
+      POSTGRES_USER: ycyw_user
+      POSTGRES_PASSWORD: ycyw_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  api:
+    build: .
+    container_name: ycyw-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ycyw_db
+      SPRING_DATASOURCE_USERNAME: ycyw_user
+      SPRING_DATASOURCE_PASSWORD: ycyw_password
+      JWT_SECRET: yourcaryourway-super-secret-key-2026-très-longue
+      JWT_EXPIRATION: 86400000
+    depends_on:
+      - postgres
+    restart: always
+
+volumes:
+  postgres_data:

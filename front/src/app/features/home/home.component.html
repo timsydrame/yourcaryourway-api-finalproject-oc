@@ -1,0 +1,67 @@
+<mat-toolbar color="primary" class="home-toolbar">
+  <span>Your Car Your Way</span>
+
+  <span class="toolbar-spacer"></span>
+
+  <button mat-button (click)="goToChangePassword()">
+    <mat-icon>lock</mat-icon>
+    Changer le mot de passe
+  </button>
+
+  <button mat-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    Déconnexion
+  </button>
+</mat-toolbar>
+
+<div class="home-container">
+  <mat-card class="welcome-card">
+    <mat-card-header>
+      <mat-card-title>
+        Bienvenue
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        Espace utilisateur
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <ng-container *ngIf="currentUser; else noUser">
+        <p>
+          Bonjour
+          <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
+        </p>
+
+        <p>
+          Email :
+          <strong>{{ currentUser.email }}</strong>
+        </p>
+      </ng-container>
+
+      <ng-template #noUser>
+        <p>Utilisateur connecté.</p>
+      </ng-template>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="goToChangePassword()"
+      >
+        <mat-icon>lock</mat-icon>
+        Changer mon mot de passe
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="logout()"
+      >
+        <mat-icon>logout</mat-icon>
+        Se déconnecter
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,94 @@
+<div class="login-container">
+  <mat-card class="login-card">
+
+    <mat-card-header>
+      <mat-card-title>Connexion</mat-card-title>
+      <mat-card-subtitle>
+        Your Car Your Way
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="exemple@email.com"
+            autocomplete="email"
+          />
+
+          <mat-icon matSuffix>email</mat-icon>
+
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+            L'email est obligatoire
+          </mat-error>
+
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+            Format email invalide
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Afficher ou masquer le mot de passe"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>
+              {{ hidePassword ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+          </button>
+
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Le mot de passe est obligatoire
+          </mat-error>
+
+          <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+            Minimum 8 caractères
+          </mat-error>
+        </mat-form-field>
+
+        <div class="error-message" *ngIf="errorMessage">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="full-width submit-btn"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          <span *ngIf="!isLoading">Se connecter</span>
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <p>
+        Pas encore de compte ?
+        <a routerLink="/register">S'inscrire</a>
+      </p>
+    </mat-card-actions>
+
+  </mat-card>
+</div>
