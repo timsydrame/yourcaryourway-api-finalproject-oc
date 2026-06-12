@@ -1,67 +1,50 @@
-<mat-toolbar color="primary" class="home-toolbar">
+<mat-toolbar color="primary">
   <span>Your Car Your Way</span>
-
-  <span class="toolbar-spacer"></span>
-
+  <span class="spacer"></span>
   <button mat-button (click)="goToChangePassword()">
-    <mat-icon>lock</mat-icon>
-    Changer le mot de passe
+    <mat-icon>lock</mat-icon> Changer le mot de passe
   </button>
-
   <button mat-button (click)="logout()">
-    <mat-icon>logout</mat-icon>
-    Déconnexion
+    <mat-icon>logout</mat-icon> Déconnexion
   </button>
 </mat-toolbar>
 
 <div class="home-container">
   <mat-card class="welcome-card">
-    <mat-card-header>
-      <mat-card-title>
-        Bienvenue
-      </mat-card-title>
-
-      <mat-card-subtitle>
-        Espace utilisateur
-      </mat-card-subtitle>
-    </mat-card-header>
-
     <mat-card-content>
-      <ng-container *ngIf="currentUser; else noUser">
-        <p>
-          Bonjour
-          <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>
-        </p>
-
-        <p>
-          Email :
-          <strong>{{ currentUser.email }}</strong>
-        </p>
-      </ng-container>
-
-      <ng-template #noUser>
-        <p>Utilisateur connecté.</p>
-      </ng-template>
+      <h2>Bienvenue</h2>
+      <p>Espace utilisateur</p>
+      @if (currentUser) {
+        <p>Bonjour <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong></p>
+        <p>Email : <strong>{{ currentUser.email }}</strong></p>
+      }
     </mat-card-content>
-
     <mat-card-actions>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="goToChangePassword()"
-      >
-        <mat-icon>lock</mat-icon>
-        Changer mon mot de passe
+      <button mat-stroked-button (click)="goToChangePassword()">
+        <mat-icon>lock</mat-icon> Changer mon mot de passe
       </button>
-
-      <button
-        mat-stroked-button
-        color="warn"
-        (click)="logout()"
-      >
-        <mat-icon>logout</mat-icon>
-        Se déconnecter
+      <button mat-stroked-button (click)="logout()">
+        <mat-icon>logout</mat-icon> Se déconnecter
       </button>
     </mat-card-actions>
   </mat-card>
+
+  <!-- NAVIGATION PRINCIPALE -->
+  <div class="nav-cards">
+    <mat-card class="nav-card" (click)="goToOffers()">
+      <mat-card-content>
+        <mat-icon class="nav-icon">directions_car</mat-icon>
+        <h3>Rechercher un véhicule</h3>
+        <p>Trouvez et réservez votre voiture</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="nav-card" (click)="goToReservations()">
+      <mat-card-content>
+        <mat-icon class="nav-icon">event_note</mat-icon>
+        <h3>Mes réservations</h3>
+        <p>Consultez et gérez vos réservations</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

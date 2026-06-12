@@ -1,1 +1,40 @@
-<p>offer-detail works!</p>
+<div class="detail-container">
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="48"/></div>
+  } @else if (offer()) {
+    <button mat-button (click)="goBack()" class="back-btn">← Retour</button>
+
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>{{ offer()!.vehicle.brand }} {{ offer()!.vehicle.model }}</mat-card-title>
+        <mat-card-subtitle>{{ offer()!.vehicle.year }} · {{ offer()!.vehicle.acrissCode }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="vehicle-info">
+          <span>⛽ {{ offer()!.vehicle.fuelType }}</span>
+          <span>⚙️ {{ offer()!.vehicle.transmission }}</span>
+          <span>💺 {{ offer()!.vehicle.seats }} places</span>
+        </div>
+
+        <div class="agency-info">
+          <p><strong>📍 Départ :</strong> {{ offer()!.agencyDeparture.name }} — {{ offer()!.agencyDeparture.city }}</p>
+          <p><strong>📍 Retour :</strong> {{ offer()!.agencyReturn.name }} — {{ offer()!.agencyReturn.city }}</p>
+        </div>
+
+        <div class="price-box">
+          <span class="price">{{ offer()!.pricePerDay }}€ / jour</span>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary"
+                (click)="reserve()"
+                [disabled]="reserving()">
+          @if (reserving()) { <mat-spinner diameter="20"/> }
+          @else { Réserver ce véhicule }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

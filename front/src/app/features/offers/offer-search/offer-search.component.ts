@@ -99,12 +99,21 @@ export class OfferSearchComponent {
   }
 
   goToDetail(id: string): void {
-    this.router.navigate(['/offers', id]);
+    this.router.navigate(['/offers', id], {
+      state: {
+        departureDateTime: this.toIso(this.searchForm.value.departureDate),
+        returnDateTime: this.toIso(this.searchForm.value.returnDate),
+      },
+    });
   }
 
   private toIso(date: Date): string {
     const d = new Date(date);
     d.setHours(10, 0, 0, 0);
     return d.toISOString().slice(0, 19);
+  }
+
+  goHome(): void {
+    this.router.navigate(['/home']);
   }
 }

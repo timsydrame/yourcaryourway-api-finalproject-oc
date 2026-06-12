@@ -1,0 +1,78 @@
+<div class="reservations-container">
+
+  <div class="reservations-header">
+  <div>
+    <button mat-button type="button" class="back-btn" (click)="goHome()">
+      ← Retour accueil
+    </button>
+
+    <h1>Mes réservations</h1>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="goToSearch()">
+    + Nouvelle réservation
+  </button>
+</div>
+
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="48"/></div>
+  } @else if (reservations().length === 0) {
+    <div class="no-reservations">
+      <p>Vous n'avez pas encore de réservation.</p>
+      <button mat-raised-button color="primary" (click)="goToSearch()">
+        Rechercher un véhicule
+      </button>
+    </div>
+  } @else {
+    <div class="reservations-grid">
+      @for (reservation of reservations(); track reservation.id) {
+        <mat-card class="reservation-card">
+          <mat-card-header>
+            <mat-card-title>
+              {{ reservation.offer.vehicle.brand }} {{ reservation.offer.vehicle.model }}
+            </mat-card-title>
+            <mat-card-subtitle>
+              {{ reservation.offer.vehicle.year }} · {{ reservation.offer.vehicle.acrissCode }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="status-row">
+              <mat-chip [color]="getStatusColor(reservation.status)" highlighted>
+                {{ getStatusLabel(reservation.status) }}
+              </mat-chip>
+            </div>
+
+            <div class="dates-info">
+              <p>📅 Départ : <strong>{{ formatDate(reservation.departureDateTime) }}</strong></p>
+              <p>📅 Retour : <strong>{{ formatDate(reservation.returnDateTime) }}</strong></p>
+            </div>
+
+            <div class="agency-info">
+              <p>📍 {{ reservation.offer.agencyDeparture.name }}</p>
+            </div>
+
+            <div class="price-row">
+              <span class="total-price">Total : {{ reservation.totalPrice }}€</span>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            @if (reservation.status === 'CONFIRMED') {
+              <button mat-stroked-button color="warn"
+                      (click)="cancel(reservation.id)"
+                      [disabled]="cancellingId() === reservation.id">
+                @if (cancellingId() === reservation.id) {
+                  <mat-spinner diameter="18"/>
+                } @else {
+                  Annuler
+                }
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+
+</div>
