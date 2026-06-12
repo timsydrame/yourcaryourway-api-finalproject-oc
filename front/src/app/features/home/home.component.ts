@@ -34,4 +34,12 @@ export class HomeComponent {
   goToChangePassword(): void {
     void this.router.navigate(['/change-password']);
   }
+
+  goToOffers(): void {
+    void this.router.navigate(['/offers']);
+  }
+
+  goToReservations(): void {
+    void this.router.navigate(['/reservations']);
+  }
 }

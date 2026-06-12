@@ -48,6 +48,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'reservations',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/reservations/my-reservations/my-reservations.component').then(
+        (m) => m.MyReservationsComponent,
+      ),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
