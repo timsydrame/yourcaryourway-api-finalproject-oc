@@ -68,11 +68,12 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/v1/offers/search",
                                 "/api/v1/offers/**",
+                                "/ws/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/api-docs/**")
-                        .permitAll()
+                                "/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .oauth2ResourceServer(oauth2 ->
