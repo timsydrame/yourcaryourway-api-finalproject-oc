@@ -55,6 +55,16 @@ export const routes: Routes = [
         (m) => m.MyReservationsComponent,
       ),
   },
+
+  {
+    path: 'support',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/support/support-chat/support-chat.component').then(
+        (m) => m.SupportChatComponent,
+      ),
+  },
+
   {
     path: '',
     redirectTo: 'home',
