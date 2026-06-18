@@ -1,0 +1,56 @@
+<div class="chat-container">
+
+  <div class="chat-header">
+    <button mat-button (click)="goBack()">← Retour</button>
+    <h1>Support client</h1>
+    <span class="status" [class.connected]="connected()">
+      {{ connected() ? '🟢 Connecté' : '🔴 Déconnecté' }}
+    </span>
+  </div>
+
+  <mat-card class="chat-card">
+
+    <div id="chat-messages" class="messages-area">
+      @if (loading()) {
+        <div class="loading"><mat-spinner diameter="36"/></div>
+      } @else if (messages().length === 0) {
+        <div class="no-messages">
+          <p>Aucun message. Commencez la conversation !</p>
+        </div>
+      } @else {
+        @for (msg of messages(); track msg.id) {
+          <div class="message-row" [class.my-message]="isMyMessage(msg)">
+            <div class="bubble">
+              <p class="content">{{ msg.content }}</p>
+              <span class="time">{{ formatTime(msg.createdAt) }}</span>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="input-area">
+      <mat-form-field appearance="outline" class="message-field">
+        <mat-label>Votre message</mat-label>
+        <input matInput
+               [formControl]="messageControl"
+               placeholder="Écrivez votre message..."
+               (keydown.enter)="send()">
+        @if (messageControl.hasError('maxlength')) {
+          <mat-error>Maximum 1000 caractères</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-raised-button color="primary"
+              (click)="send()"
+              [disabled]="messageControl.invalid || sending()">
+        @if (sending()) {
+          <mat-spinner diameter="18"/>
+        } @else {
+          <mat-icon>send</mat-icon>
+        }
+      </button>
+    </div>
+
+  </mat-card>
+</div>

@@ -42,4 +42,8 @@ export class HomeComponent {
   goToReservations(): void {
     void this.router.navigate(['/reservations']);
   }
+
+  goToSupport(): void {
+    void this.router.navigate(['/support']);
+  }
 }
