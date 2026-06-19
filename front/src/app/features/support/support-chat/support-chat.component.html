@@ -42,14 +42,14 @@
       </mat-form-field>
 
       <button mat-raised-button color="primary"
-              (click)="send()"
-              [disabled]="messageControl.invalid || sending()">
-        @if (sending()) {
-          <mat-spinner diameter="18"/>
-        } @else {
-          <mat-icon>send</mat-icon>
-        }
-      </button>
+        (click)="send()"
+        [disabled]="!canSend()">
+  @if (sending()) {
+    <mat-spinner diameter="18"/>
+  } @else {
+    <mat-icon>send</mat-icon>
+  }
+</button>>
     </div>
 
   </mat-card>
