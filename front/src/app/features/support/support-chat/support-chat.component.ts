@@ -113,13 +113,14 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   isMyMessage(message: ChatMessageResponse): boolean {
     return message.direction === 'USER_TO_SUPPORT';
   }
-
   formatTime(dt: string): string {
-    if (!dt || dt.length < 16) {
-      return '';
-    }
-
-    return dt.substring(11, 16);
+    if (!dt) return '';
+    // Le backend envoie une heure sans fuseau, on force l'interprétation en UTC
+    return new Date(dt + 'Z').toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Paris',
+    });
   }
 
   private loadHistory(): void {
