@@ -2,7 +2,7 @@ package com.yourcaryourway.api.dto;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -19,5 +19,5 @@ public class ChatMessageResponse {
     private String direction;
     private String attachmentUrl;
     private boolean isRead;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 }
