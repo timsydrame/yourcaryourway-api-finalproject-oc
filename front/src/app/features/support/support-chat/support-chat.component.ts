@@ -113,16 +113,23 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   isMyMessage(message: ChatMessageResponse): boolean {
     return message.direction === 'USER_TO_SUPPORT';
   }
-  formatTime(dt: string): string {
-    if (!dt) return '';
-    // Le backend envoie une heure sans fuseau, on force l'interprétation en UTC
-    return new Date(dt + 'Z').toLocaleTimeString('fr-FR', {
+
+  formatTime(dt: string | null | undefined): string {
+    if (!dt) {
+      return '';
+    }
+
+    const date = new Date(dt);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat(navigator.language || 'fr-FR', {
       hour: '2-digit',
       minute: '2-digit',
-      timeZone: 'Europe/Paris',
-    });
+    }).format(date);
   }
-
   private loadHistory(): void {
     this.loading.set(true);
 
