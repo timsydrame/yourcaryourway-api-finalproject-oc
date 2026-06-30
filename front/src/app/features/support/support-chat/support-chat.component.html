@@ -21,7 +21,7 @@
         @for (msg of messages(); track msg.id) {
           <div class="message-row" [class.my-message]="isMyMessage(msg)">
             <div class="bubble">
-              <p class="content">{{ msg.content }}</p>
+<span class="sender-name" [style.color]="getSenderColor(msg)">{{ getSenderLabel(msg) }}</span>              <p class="content">{{ msg.content }}</p>
               <span class="time">{{ formatTime(msg.createdAt) }}</span>
             </div>
           </div>

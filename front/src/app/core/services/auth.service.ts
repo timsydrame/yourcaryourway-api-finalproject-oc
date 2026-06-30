@@ -49,25 +49,25 @@ export class AuthService {
   }
 
   getCurrentUser(): {
+    id: string;
     email: string;
     firstName: string;
     lastName: string;
-  } | null {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
-  }
+} | null {
+  const user = localStorage.getItem(this.userKey);
+  return user ? JSON.parse(user) : null;
+}
 
   private saveSession(response: AuthResponse): void {
     localStorage.setItem(this.tokenKey, response.token);
     localStorage.setItem(
       this.userKey,
       JSON.stringify({
+        id: response.id,
         email: response.email,
         firstName: response.firstName,
         lastName: response.lastName,
       }),
     );
   }
-
-  
 }
