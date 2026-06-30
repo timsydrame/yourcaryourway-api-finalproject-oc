@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../core/services/auth.service';
 
 import { ChatService } from '../../../core/services/chat.service';
 import { ChatMessageResponse } from '../../../core/interfaces/chat/chat-message-response.interface';
@@ -38,6 +39,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   private readonly chatService = inject(ChatService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly authService = inject(AuthService);
 
   private readonly subscriptions = new Subscription();
 
@@ -46,9 +48,19 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   sending = signal(false);
   connected = signal(false);
 
+  currentUserEmail = signal<string | null>(null);
+  isSupportAgent = signal(false);
+  currentUserId = signal<string | null>(null);
+
   messageControl = new FormControl('', [Validators.maxLength(1000)]);
 
   ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
+    this.currentUserEmail.set(currentUser?.email ?? null);
+    this.currentUserId.set(currentUser?.id ?? null);
+    this.isSupportAgent.set(
+      currentUser?.email === 'support@yourcaryourway.com',
+    );
     this.loadHistory();
 
     this.chatService.connect(CONVERSATION_ID);
@@ -82,10 +94,10 @@ export class SupportChatComponent implements OnInit, OnDestroy {
 
     const sent = this.chatService.sendMessage({
       conversationId: CONVERSATION_ID,
-      userId: null,
+      userId: this.currentUserId(),
       subject: 'Support client',
       content,
-      direction: 'USER_TO_SUPPORT',
+      direction: this.isSupportAgent() ? 'SUPPORT_TO_USER' : 'USER_TO_SUPPORT',
     });
 
     if (!sent) {
@@ -111,7 +123,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   isMyMessage(message: ChatMessageResponse): boolean {
-    return message.direction === 'USER_TO_SUPPORT';
+    return message.email === this.currentUserEmail();
   }
 
   formatTime(dt: string | null | undefined): string {
@@ -130,6 +142,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       minute: '2-digit',
     }).format(date);
   }
+
   private loadHistory(): void {
     this.loading.set(true);
 
@@ -169,5 +182,33 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       !this.sending() &&
       this.connected()
     );
+  }
+
+  getSenderLabel(message: ChatMessageResponse): string {
+    if (this.isMyMessage(message)) {
+      return 'Vous';
+    }
+    return message.firstName || 'Support client';
+  }
+
+  getSenderColor(msg: ChatMessageResponse): string {
+    if (this.isMyMessage(msg)) {
+      return '#BDD7EE';
+    }
+
+    const colors = [
+      '#2b5983',
+      '#375623',
+      '#B8860B',
+      '#6A1B9A',
+      '#00695C',
+      '#365820',
+    ];
+    const label = this.getSenderLabel(msg);
+    let hash = 0;
+    for (let i = 0; i < label.length; i++) {
+      hash = label.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
   }
 }

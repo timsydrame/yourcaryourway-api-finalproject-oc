@@ -16,6 +16,7 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toUser(RegisterRequest request);
 
+    @Mapping(target = "id", expression = "java(user.getId().toString())")
     @Mapping(target = "token", source = "token")
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "firstName", source = "user.firstName")

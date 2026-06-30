@@ -3,7 +3,9 @@ package com.yourcaryourway.api.service;
 import com.yourcaryourway.api.dto.ChatMessageRequest;
 import com.yourcaryourway.api.dto.ChatMessageResponse;
 import com.yourcaryourway.api.model.Message;
+import com.yourcaryourway.api.model.User;
 import com.yourcaryourway.api.repository.MessageRepository;
+import com.yourcaryourway.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,12 @@ import java.util.List;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public ChatMessageResponse sendMessage(ChatMessageRequest request) {
 
-        // 1. Sauvegarder en base
         Message message = Message.builder()
                 .conversationId(request.getConversationId().trim())
                 .userId(request.getUserId())
@@ -33,7 +35,6 @@ public class MessageService {
         Message saved = messageRepository.save(message);
         ChatMessageResponse response = toResponse(saved);
 
-        // 2. Diffuser en temps réel à tous les abonnés
         messagingTemplate.convertAndSend(
                 "/topic/conversations/" + request.getConversationId(),
                 response
@@ -52,10 +53,16 @@ public class MessageService {
     }
 
     private ChatMessageResponse toResponse(Message m) {
+        User user = (m.getUserId() != null)
+                ? userRepository.findById(m.getUserId()).orElse(null)
+                : null;
+
         return ChatMessageResponse.builder()
                 .id(m.getId())
                 .conversationId(m.getConversationId())
                 .userId(m.getUserId())
+                .firstName(user != null ? user.getFirstName() : "Utilisateur")
+                .email(user != null ? user.getEmail() : null)
                 .subject(m.getSubject())
                 .content(m.getContent())
                 .direction(m.getDirection() != null ? m.getDirection().name() : null)
